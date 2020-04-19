@@ -414,4 +414,254 @@ Select last_name, commission_pct, manager_id,
 from employees;
 ```
 **Nota:** Los parametro enviados a coalesce, deben ser de tipo char
- 
+
+# Expresiones condicionales 
+
+Sirven para proporcionar el uso de la logica IF-THEN-ELSE dentro de una sentencia SQL.
+
+## La expresión case 
+
+```
+Select last_name, job_id, salary,
+    case job_id
+        when 'IT_PROG'  then 1.10*salary
+        when 'ST_CLERK' then 1.15*salary
+        when 'SA_REP'   then 1.20*salary
+        else salary
+    end
+    as "Revision de Salario"
+from employees;
+```
+
+## La función decode
+
+```
+Select last_name, job_id, salary,
+    decode(job_id,'IT_PROG',  1.10*salary,
+                  'ST_CLERK', 1.15*salary,
+                  'SA_REP',   1.20*salary,
+           salary) 
+    as "Revision de Salario"
+from employees;
+```
+
+# FUNCIONES DE UNA SOLA FILA 
+
+## FUNCIONES DE CARACTER 
+
+Funciones de caracter: lower, upper, initcap
+
+| FUNCION | Resultado |
+| ---     | ---        |
+| LOWER(' Curso SQL ')        | curso sql |
+| INITCAP(' Curso SQL ')      | Curso Sql |
+| UPPER(' Curso SQL ')        | CURSO SQL |
+
+### lower
+
+Select lower(last_name) as "apellido en minuscula"
+from employees
+where lower(last_name) = 'higgins';
+
+### upper
+
+Select upper(last_name) as "apellido en mayuscula"
+from employees
+where upper(last_name) = 'HIGGINS';
+
+### initcap
+
+Select initcap(first_name || ' ' || last_name) 
+    as "Nombre Completo con iniciales mayusculas"
+from employees
+where last_name = 'Higgins';
+
+## Funciones de Manipulación
+
+|  FUNCION                           |  Resultado|
+|       ---                          |  ---        |
+|  CONCAT('Hello', 'World')           | HelloWorld |
+|  TRIM('H' FROM 'HelloWorld')        | elloWorld |
+|  SUBSTR('HelloWorld',1,5)           | Hello |
+|  LENGTH('HelloWorld')               | 10 |
+|  INSTR('HelloWorld', 'W')           | 6 |
+|  LPAD(salary,10,'*')               | *****24000 |
+|  RPAD(salary, 10, '*')               | 24000***** |
+|  REPLACE('JACK and JUE','J','BL')    | BLACK and BLUE |
+
+```
+Select employee_id, concat(first_name, last_name) as name, job_id, 
+    length(last_name), instr(last_name, 'a') as "Posición de a"
+from employees
+where substr(job_id,4) = 'REP';
+```
+
+**Nota1:** substr(job_id,4) solo se indica a apartir de cual caracter se desea cobtener
+**Nota2:** instr(last_name, 'a') devolverá cero, si last_name no contiene a, y devolverá la posición de la ultima a encontrada
+
+## ANIDAMIENTO DE FUNCIONES 
+
+**Paso 1:** Obtener del apellido los caracteres de la posicion 1 a la 3
+```
+Select substr(last_name,1,3) 
+from employees
+where department_id = 60;
+```
+**Paso 2:** Concatenar los primeros 3 caracteres del apellido con '_US'
+```
+Select concat(substr(last_name,1,3), '_US' )
+from employees
+where department_id = 60;
+```
+
+**Paso 3:** Convertir a mayúsculas
+```
+Select upper(concat(substr(last_name,1,3), '_US' )) 
+from employees
+where department_id = 60; 
+```
+
+## FUNCIONES NUMERICAS 
+
+### Round
+
+```
+Select round(45.923,2), round(45.923,0),round(45.923,-1)
+from dual;
+```
+
+**Nota:** al poner -1 (Aproxima a la decena cercana)
+          al poner 1 o más (Aproxima a la cantidad de digitos especificados)
+          al poner 0 (Aproxima a la unidad cercana)
+
+### Trunc
+
+```
+Select trunc(45.923,2),trunc(45.923,0),trunc(45.923,-1),trunc(45.923)
+from dual;
+```
+
+**Nota:** al poner -1 (corta a la decena en que se encuentra. NO aproxima)
+          al poner 1 o más (Corta a la cantidad de digitos especificados, sin aproximar)
+          al poner 0 (Coloca el numero en su unidad entera)
+
+### Mod
+
+Devuelve el residuo de una división. Ejemplo: mod(1600, 500) = 100
+
+```
+Select last_name, salary, mod(salary, 5000)
+From employees
+where job_id = 'SA_REP';
+```
+
+## FUNCIONES FECHA 
+
+Formatos de fecha RR y YY
+
+| Año actual    |  Fecha Especificada    |  Formato RR     | Formato YY|
+| ---           |   ---                  |   ---           |  ---  |
+|  1995         |   27-OCT-95            |   1995          |  1995 |
+|  1995         |   27-OCT-17            |   2017          |  1917 |
+|  2001         |   27-OCT-17            |   2017          |  2017 |
+|  2001         |   27-OCT-95            |   1995          |  2095 |
+
+### FUNCION SYSDATE 
+
+devuelve la fecha actual
+
+```
+Select sysdate
+from dual;
+```
+
+### ARITMETICA DE FECHAS 
+
+Ejemplo: calcular las semanas de contratacion de un empleado desde su contratacion
+
+```
+Select last_name, (sysdate-hire_date)/7 as "Semanas de trabajo"
+from employees
+where department_id = 90;
+```
+
+**Nota:** la resta devuelve el numero de días
+
+### FUNCIONES DE MANIPULACION 
+
+| Funcion                   | Resultado  |
+| ---                       | --- |
+| MONTHS_BETWEEN            |   Número de meses entre dos fechas |
+| ADD_MONTHS                |   Agrega mes calendario hasta la fecha |
+| NEXT_DAY                  |   Día de la semana de la fecha especificada |
+| LAST_DAY                  |  Último día del mes |
+| ROUND                     |   Fecha redondeada  |
+| TRUNC                     |   Fecha truncada  |
+
+```
+Select MONTHS_BETWEEN('01-abr-2020','01-Ene-2020')
+from dual;
+
+Resultado : 3
+```
+
+
+```
+Select add_months('04-Ene-2020',5)
+from dual;
+
+Resultado : 04/06/20
+```
+
+```
+Select next_day('01-abr-2020','Miércoles')
+from dual;
+
+Resultado : 08/04/20, exactamente el próximo viernes será 08/04
+```
+
+```
+
+Select last_day('01-abr-2020')
+from dual;
+
+Resultado : 30/04/20
+```
+
+### Round fechas 
+
+```
+Define micumple = '16-06-2020'
+
+Select to_date('&micumple'), 
+        round(to_date('&micumple'),'MONTH'), 
+        round(to_date('&micumple'),'YEAR')
+from dual;
+
+UNDEFINE micumple
+
+-- TO_DATE      ROUND(mes)   ROUND(año)
+------------    --------     --------
+-- 16/06/20     01/07/20     01/01/20
+```
+
+### Trunc fechas 
+
+```
+Define micumple = '16-06-2020'
+
+Select to_date('&micumple'), 
+        trunc(to_date('&micumple'),'MONTH'), 
+        trunc(to_date('&micumple'),'YEAR')
+from dual;
+
+UNDEFINE micumple
+
+-- TO_DATE      TRUNC(mes)   TRUNC(año)
+------------    --------     --------
+-- 16/06/20     01/06/20     01/01/20
+
+```
+
+**Nota:** Trunc y Round recibe obligadamente el parametro en tipo fecha
+
