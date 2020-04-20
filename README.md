@@ -665,3 +665,114 @@ UNDEFINE micumple
 
 **Nota:** Trunc y Round recibe obligadamente el parametro en tipo fecha
 
+# Informes de datos agregados utilizando las funciones de grupo 
+
+Operan en un conjunto de filas para devolver un solo resultado por grupo
+
+| Operación | Resultado|
+| ---       | ---      |
+| AVG | Devuelve el Promedio |
+| COUNT | Cuenta los registros |
+| MAX | Devuelve el máximo |
+| MIN | Devuelve el mínimo |
+| SUM | Devuelve la suma |
+
+```
+Select AVG(salary), MAX(salary), MIN(salary), COUNT(salary), SUM(salary)
+from employees
+where job_id like '%REP%';
+```
+
+## Uso de MIN y MAX en fecha
+
+```
+Select MIN(hire_date), MAX(hire_date)
+from employees;
+```
+
+## Count
+
+Count (*) 
+
+devuelve el número de filas de una tabla
+
+```
+Select count(*)
+from employees;
+```
+Count (columna(s)) devuelve el número de filas con valores no nulos
+
+```
+Select count(commission_pct)
+from employees;
+```
+
+Count(Distinct expresion): devuelve el número de distintos valores no nulos de expresión
+
+```
+Select count(distinct department_id)
+from employees;
+```
+## AVG 
+**Importante:** al  promediar es vital considerar que las funciones de grupo ignoran los valores nulos en la columna
+
+```
+Select avg(commission_pct)
+from employees;
+
+Resultado: 0.22285
+```
+
+Forzando el uso de datos nulos en las funciones de grupo utilizando la función NVL para incluir nulos(recordar que NVL remmplaza el valor del primer parametro por el segundo, si al caso este es nulo)
+
+```
+Select avg(nvl(commission_pct,0))
+from employees;
+
+-- Resultado: 0.07289
+```
+
+ ## Group by en Funciones de Grupo 
+
+Es importante aclarar que los group by es una solución para cuando se quieren agregar columnas, que no son de agregación (que no son el resultado de un conjunto como las funciones de grupo)
+
+En el presente caso se obtiene el salario promedio por departamento, al agregar department_id, este se agrega en el group by. Si no se agrega será tratado como un error
+
+```
+Select department_id, AVG(salary)
+from employees
+group by department_id
+order by department_id;
+```
+
+**Nota:** Al agregar más de alguna columna en el select, estas deben ser agregadas también en el group by
+
+```
+Select  department_id, job_id, SUM(salary)
+from employees
+group by department_id, job_id
+order by department_id;
+```
+
+## Clausula HAVING para restringir grupos 
+
+Having es utilizado para realizar restricciones despues de haber agrupado registros, cosa que con Where no se puede, ya que este lo hace antes de agrupar
+
+Ejemplo 1: Obtener el salario máximo por departamento, pero solo aquellos que son mayor a 10,000
+
+Select department_id, max(salary)
+from employees
+group by department_id
+having max(salary) > 10000;
+
+ejemplo 2: Para este caso se pretende mostrar el orden en que se colucan las clausulas
+                  **GROUP BY -> HAVING -> ORDER BY**
+
+```
+Select job_id, sum(salary)
+from employees
+where job_id like '%REP%'
+group by job_id
+having sum(salary) > 10000
+order by job_id;
+'''
