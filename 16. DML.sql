@@ -73,6 +73,14 @@ rollback;
 
 commit;
 
+-- For Update
+
+Select * 
+From employees
+Where department_id = 50
+For update;
+
+
 
                 
 
