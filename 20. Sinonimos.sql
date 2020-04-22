@@ -1,0 +1,28 @@
+--------------------------------------- SINONIMOS --------------------------------------------------
+-- Da nombres alternativos a los objetos
+-- Es un objeto de base de datos
+-- Puede ser creado para dar un nombre alternativo para una tabla o a otro objeto de base de datos
+-- No requiere almacenamiento que no sea su definición en el diccionario de datos
+-- Es útil para oculta la identidad y la ubicación de un objeto de esquema subyacente
+
+-- Creación de un sinónimo de un objeto
+
+-- Simplificar el acceso a los objetos la creación de un sinónimo (otro nombre para un objeto). Con sinónimos, puede:
+
+-- * Crear una referencia más fácil a una tabla que es propiedad de otro usuario.
+-- * Acortar largos nombres del objeto
+
+-- CREATE [Public] SYNONYM synonym
+-- FOR    object;
+
+Create synonym sinonimo_sequence_id
+For sequence_emp_id;
+
+Describe user_synonyms;
+
+Select *
+From user_synonyms;
+
+-- Eliminar sinonimo
+Drop synonym sinonimo_sequence_id;
+
