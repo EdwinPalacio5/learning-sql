@@ -46,9 +46,31 @@
    - [AVG](#avg)
    - [Cláusula GROUP BY](#group-by-en-funciones-de-grupo)
    - [Cláusula HAVING](#clausula-having-para-restringir-grupos)
-   - []()
-   - []()
-   - []()
+- [JOINS](#mostrar-datos-de-múltiples-tablas-usando-joins)
+   - [Tipos de join](#tipos-de-join)
+   - [Sintaxis](#sintaxis)
+   - [Natural Join](#natural-join)
+   - [Join Using](#using)
+   - [Join On](#on)
+   - [Self Join](#self-join)
+   - [Nonequijoins](#nonequijoins)
+   - [OuterJoin](#outer-join)
+      - [Left Outer Join](#left-outer-join)
+      - [Right Outer Join](#right-outer-join)
+      - [Full Outer Join](#full-outer-join)
+   - [Cross Join](#cross-join)
+- [Uso de Subconsultas](#uso-de-subconsultas)
+   - [Tipos de Subconsulta](#tipos-de-subconsulta)
+      - [Subconsulta de una sola fila](#subconsulta-de-una-sola-fila)
+      - [Subconsulta de multiples filas](#subconsulta-de-multiples-filas)
+   - [Operador Exists y Not Exists](#operador-exists-not-exists)
+- [Operadores de Conjunto](#operadores-conjuntos)
+   - [Union](#operador-union)
+   - [Union All](#union-all)
+   - [Intersect](#intersect)
+   - [Minus](#minus)
+   - [Articio: Coincidir Conjuntos](#artificio-coincidir-conjuntos-sentencias-select)
+   - [Order By en Subconjuntos](#order-by-en-conjuntos)
    
 # Accediendo a los datos mediante Select
 
@@ -842,7 +864,7 @@ order by job_id;
 
 # Mostrar datos de múltiples tablas usando Joins 
 
-##Tipos de Join 
+## Tipos de Join 
 
 Los Join son compatibles con SQL: El Estandar 1999 incluye los siguientes
 
@@ -866,13 +888,15 @@ Los Join son compatibles con SQL: El Estandar 1999 incluye los siguientes
  [CROSS JOIN table2];
 ```
 
-# NATURAL JOIN
+## NATURAL JOIN
 Se basa en todas las columnas de las dos tablas que tienen el mismo nombre, seleccionando las filas de las dos tablas que tienen valores iguales en todas las columnas coincidentes. 
 **Nota:** Si las columnas que tienen los mismos nombre son de diferente tipo, se devuelve un error. 
 
+```
 Select employee_id, last_name, department_id, department_name
 From employees
     Natural Join departments;
+```
 
 ## USING
 
@@ -885,17 +909,21 @@ From employees
 
 **Observación 1:** No cualificar una columna que se utiliza en la clausula USING. Si se quiere utilizar una columna cualificada no se debe ocupar el alias. por ejemplo: **location_id** 
 
+```
 Select l.city, d.department_name
 From  locations l
     Join departments d using (location_id)
 where location_id = 1400;
+```
 
 **Observación 2:** la columna cualificada no tendrá alias ni en el where, ni el select ni ninguna otra parte
 
+```
 Select e.employee_id, e.last_name, department_id, d.department_name
 From employees e
     Join departments d using (department_id)
 Where department_id = 30;
+```
 
 ## ON
 
@@ -910,7 +938,8 @@ From employees e
 
 Si deseamos añadir condiciones se podría mediante AND o WHERE. Ambas devuelven el mismo resultado, pero en terminos de performance es recomendable AND.
 
-**AND**
+Utilizando AND
+
 ```
 Select e.employee_id, e.last_name, e.department_id , d.department_id, d.department_name
 From employees e
@@ -919,7 +948,8 @@ From employees e
     And e.department_id=30
     And e.salary > 10000;
 ```
-**WHERE**
+
+Utilizando WHERE
 
 ```
 Select e.employee_id, e.last_name, e.department_id , d.department_id, d.department_name
@@ -929,7 +959,7 @@ From employees e
     Where e.department_id=30 and e.salary > 10000;
 ```
 
-**Al realizar en varias tablas**
+Al realizar JOIN en más de una tabla
 
 ```
 Select  e.last_name, d.department_name, l.city
@@ -1192,7 +1222,7 @@ From locations;
 ```
 
 En este caso, las columnas no compatibles se sustituyeron por: TO_CHAR(NULL)
-**NOta:** Los nombres de las columnas serán dados por el primer conjunto
+**Nota:** Los nombres de las columnas serán dados por el primer conjunto
 
 ## Order By en Conjuntos
 
