@@ -1236,3 +1236,246 @@ Select  employee_id, job_id
 From    job_history
 order by job_id;
 ```
+
+# DML Lenguaje de Manipulación de Datos 
+
+ |            Funcion           |             Descripcion                     |
+ |            ---               |                                             |
+ | INSERT                       | Agrega una nueva fila a la tabla            |
+ | UPDATE                       | Modifica las filas existentes               |
+ | DELETE                       | Elimina las filas existentes                |
+ | TRUNCATE                     | Elimina todas las filas de una tabla        |
+ | COMMIT                       | Hace los cambios pedientes en permanentes   |
+ | SAVEPONT                     | Marca un punto de salvaguarda               |
+ | ROLLBACK                     | Descarta los cambios pendientes de datos    |
+ | FOR UPDATE en clausula SELECT| Bloquea las filas identificadas en el SELECT|
+
+
+
+## Insert
+
+ *Insert implícito: Se omiten columnas que no son obligatorias
+
+```
+Insert into departments (department_id, department_name)
+                values  (280, 'QA');
+```
+
+*Insert explicito: No se especifican lo campos, poy lo que el insert espera todos los campos, por lo que los campos que no se deseen agregar se pueden poner nulos
+
+```
+Insert into departments 
+                values (290, 'Testing', NULL, NULL);
+```
+                
+ *Copiando fila con otra tabla: En este caso la clausula **values NO** se agrega
+
+```
+Insert into departments (department_id, department_name, manager_id, location_id)
+       (Select 300, last_name, manager_id, 1000 
+        From employees
+        Where employee_id = 127);
+```
+## Update
+
+```
+Update departments
+    set department_name = 'Documentadores'
+where department_id = 300;
+```
+
+*Update con sub consulta
+
+```
+Update departments
+    set (department_name, manager_id) = (Select  last_name, manager_id 
+                                         From employees
+                                         Where employee_id = 122)
+Where department_id = 300;
+````
+
+## Delete
+
+```
+Delete 
+From departments
+Where department_id = 300;
+````
+
+## Savepoint
+
+```
+savepoint punto;
+```
+
+## Rollback a un punto en especifico
+
+```
+rollback to punto;
+```
+
+## Rollback de todos los cambios pendientes
+
+```
+rollback;
+```
+
+## Commit
+
+```
+commit;
+```
+## For Update
+
+```
+Select * 
+From employees
+Where department_id = 50
+For update;
+```
+
+# DDL Lenguaje de Definición de Datos 
+
+## ALTER TABLE
+
+### Alter table ADD
+ Permite agregar una columna
+
+```
+Alter table author 
+Add (LASTNAME varchar(50) Not Null);
+```
+
+### Alter table MODIFY
+ Permite modificar la definición de una columna
+
+```
+Alter table author 
+Modify (LASTNAME varchar(40));
+```
+
+### Alter table DROP
+ Permite eliminar una columna
+
+```
+Alter table author
+Drop (LASTNAME);
+```
+
+### Alter table RENAME COLUMN
+ Permite renombrar una columna
+
+```
+Alter table author
+Rename column LASTNAME to LAST_NAME;
+```
+
+### Alter table READ ONLY
+ Permite configurar una tabla en solo lectura
+
+```
+Alter table author 
+Read Only;
+```
+
+### Alter table READ WRITE
+ Permite configurar una tabla en lectura y escritura
+
+```
+Alter table author
+Read Write;
+```
+
+## Drop table name_table
+
+Permite eliminar una tabla, al agregar **PURGE** se eliminan todos sus datos también
+
+```
+Drop table user_role;
+```
+
+## Create
+
+```
+Create table Editorial(
+    editorial_id        number(8)   not null,
+    editorial_name      varchar(50) not null
+);
+```
+
+*Crear una table en base a otra (una consulta)
+```
+Create table editorials as (
+    Select * 
+    from editorial
+);
+
+Describe Editorials;
+```
+
+En el siguiente caso se decide las columnas y el nombre de las columnas que se tendrá y además los datos obtenidos en la consulta se agregan en la base que estamos creando:
+
+```
+create table dpto80 as (
+    Select last_name as apellido, salary*12 as "salario_anual"
+    From employees
+    Where department_id = 80
+);
+
+Describe dpto80;
+````
+
+
+
+## Constraint
+ 
+### Sintaxis de constraint: 
+```
+constraint name_constraint [primary key | not null | Unique | check] (editorial_id)
+ 
+Create table Editorial(
+    editorial_id        number(8)   not null,
+    editorial_name      varchar(50) not null,
+    constraint edi_id_pk primary key(editorial_id)
+);
+
+```
+
+*Constrain check: se puede agregar operadores between, in, etc.
+
+```
+Alter table employees
+add constraint salary_check check (SALARY > 0);
+```
+
+### Foraneas
+
+En este caso vamos a añadir primero el atributo que será foranea en la tabla secundaria book
+
+```
+Alter table book
+add (editorial_id       number(8)   not null);
+````
+
+Ahora vamos a hacer el constraint que nos permita crear la referencia de foreign key
+
+```
+Alter table book
+add (constraint edi_id_fk Foreign Key (editorial_id) 
+     references editorial(editorial_id));
+```  
+
+Y tambien podemos configurar el borrado, ya sea en cascada o set null, para ello primero borraremos la constraint 
+
+```
+Alter table book
+drop constraint edi_id_fk;
+
+Alter table book
+add (constraint edi_id_fk Foreign Key (editorial_id) 
+     references editorial(editorial_id)
+     on delete cascade); 
+     
+Describe book;
+
+```
