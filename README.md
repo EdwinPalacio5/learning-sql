@@ -1,5 +1,55 @@
-# Learning-SQL
+# Learning-SQL Database ORACLE 12 c
 
+## Tabla de contenido
+
+
+- [Accediendo a los datos mediante Select](#accediendo-a-los-datos-mediante-select).
+   - [Select](#select)
+   - [Expreciones Aritméticas](#expresiones-aritmeticas)
+   - [Alias](#alias)
+   - [Operadores de Concatenación](#operadores-de-concatenacion)
+   - [Distinct](#distinct)
+- [Restringiendo y ordenando datos](#restringiendo-y-ordenando-datos)
+   - [Cláusula Where](#where)
+   - [Operadores](#operadores)
+   - [Condicionales](#operadores-condicionales-and-or-not)
+   - [Cláusula Order By](#operador-order-by)
+   - [Variables de Sustitución](#variables-de-sustitucion)
+   - [Define e Undefine](#define--undefine)
+   - [Set Verify On](#set-verify-on)
+- [Funciones de Conversión](#funciones-de-conversion)
+   - [Función TO_CHAR](#funcion-to_char)
+      - [Fecha a Char](#fecha-a-char)
+      - [Numero a Char](#numero-a-char)
+   - [Función TO_DATE](#funcion-to_date)
+   - [Función TO_NUMBER](#funcion-to_number)
+- [Funciones Generales](#funciones-generales)
+   - [NVL 1](#nvl-expr1_a_evaluar-valor_a_tomar_si_es_null)
+   - [NVL 2](#nvl2-expr1_a_evaluar-valor_a_tomar_sino_es_nullvalor_a_tomar_si_es_null)
+   - [NULLIF](#nullif-expr1_a_evaluarexpr2_a_evaluar)
+   - [COALESCE](#coalesce-expr1_a_evaluarexpr2_a_evaluar-valor_a_mostrar_si_ambas_son_null)
+- [Expresiones Condicionales](#expresiones-condicionales)
+   - [CASE](#la-expresión-case)
+   - [DECODE](#la-función-decode)
+- [Funciones de una sola fila](#funciones-de-una-sola-fila)
+   - [Funciones de Caracter](#funciones-de-caracter)
+     - [Funciones de manipulación de caracteres](#funciones-de-manipulación)
+     - [Anidamiento de funciones](#anidamiento-de-funciones)
+   - [Funciones Numéricas](#funciones-numericas)
+   - [Funciones de Fecha](#funciones-fecha)
+     - [Función SYSDATE](#funcion-sysdate)
+     - [Aritmetica de fechas](#aritmetica-de-fechas)
+     - [Funciones de manipulación de fechas](#funciones-de-manipulacion)
+- [Funciones de grupo](#informes-de-datos-agregados-utilizando-las-funciones-de-grupo)
+   - [MIN y MAX](#uso-de-min-y-max-en-fecha)
+   - [COUNT](#count)
+   - [AVG](#avg)
+   - [Cláusula GROUP BY](#group-by-en-funciones-de-grupo)
+   - [Cláusula HAVING](#clausula-having-para-restringir-grupos)
+   - []()
+   - []()
+   - []()
+   
 # Accediendo a los datos mediante Select
 
 ## SELECT
@@ -55,7 +105,8 @@ from employees;
 ```
 
 Tambien funciona al solo colocar el alias seguidamente de la columna. 
-**Nota:** cuando es más de una palabra es necesario escribir el alias en comillas
+
+**Nota:** cuando es más de una palabra es necesario escribir el alias en comillas dobles
 
 ```
 Select last_name name, salary*12  "salario anual" 
@@ -85,6 +136,8 @@ Select (department_name || q'[ Department's Manager Id: ]' || manager_id)
 from departments;
 ```
 
+**Nota:** Se puede usar como delimitador tanto llaves, cohchetes o parentesis ([],{},())
+
 ## DISTINCT 
 
 Distinct permite eliminar resultados repetidos, para el ejemplo se hace la consulta en la tabla employees, para everiguar que 
@@ -100,7 +153,7 @@ from employees;
 ## WHERE 
 
 Where: permite agregar una condición, para que solo sean devueltas las filas que cumplen dicha condición
-**Nota:** en textos se debe buscar con comillas: 'texto', en fecha es formato DD-MM-AA
+**Nota:** en textos se debe buscar con comillas simples: 'texto', en fecha es formato DD-MM-AA
 
 ```
 Select employee_id, last_name, job_id, department_id
@@ -459,22 +512,28 @@ Funciones de caracter: lower, upper, initcap
 
 ### lower
 
+```
 Select lower(last_name) as "apellido en minuscula"
 from employees
 where lower(last_name) = 'higgins';
+``` 
 
 ### upper
 
+```
 Select upper(last_name) as "apellido en mayuscula"
 from employees
 where upper(last_name) = 'HIGGINS';
+```
 
 ### initcap
 
+```
 Select initcap(first_name || ' ' || last_name) 
     as "Nombre Completo con iniciales mayusculas"
 from employees
 where last_name = 'Higgins';
+```
 
 ## Funciones de Manipulación
 
@@ -557,6 +616,8 @@ where job_id = 'SA_REP';
 
 ## FUNCIONES FECHA 
 
+El formato de fecha por defecto es **DD-MON-RR**.
+
 Formatos de fecha RR y YY
 
 | Año actual    |  Fecha Especificada    |  Formato RR     | Formato YY|
@@ -617,7 +678,7 @@ Resultado : 04/06/20
 Select next_day('01-abr-2020','Miércoles')
 from dual;
 
-Resultado : 08/04/20, exactamente el próximo viernes será 08/04
+Resultado : 08/04/20, exactamente el próximo miercoles será 08/04
 ```
 
 ```
