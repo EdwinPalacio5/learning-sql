@@ -71,6 +71,38 @@
    - [Minus](#minus)
    - [Articio: Coincidir Conjuntos](#artificio-coincidir-conjuntos-sentencias-select)
    - [Order By en Subconjuntos](#order-by-en-conjuntos)
+- [DML Lenguaje de Manipulación de Datos](#dml-lenguaje-de-manipulación-de-datos)
+   - [Insert](#insert)
+   - [Update](#update)
+   - [Delete](#delete)
+   - [Savepoint](#savepoint)
+   - [Rollback](#rollback-a-un-punto-en-especifico)
+   - [Commit](#commit)
+   - [For Update](#for-update)
+- [DDl Lenguaje de Definición de Datos](#ddl-lenguaje-de-definición-de-datos)
+   - [Alter table](#alter-table)
+   - [Drop table](#drop-table-name_table)
+   - [Create table](#create)
+   - [Constraint](#constraint)
+      - [Sintaxis](#sintaxis-de-constraint)
+      - [Foraneas](#foraneas)
+- []()
+   - []()
+   - []()
+   - []()
+   - []()
+   - []()
+   - []()
+   - []()
+   - []()
+   - []()
+   - []()
+   - []()
+   - []()
+   - []()
+   - []()
+   - []()
+   
    
 # Accediendo a los datos mediante Select
 
@@ -1254,21 +1286,21 @@ order by job_id;
 
 ## Insert
 
- *Insert implícito: Se omiten columnas que no son obligatorias
+ *Insert implícito: Se omiten columnas que no son obligatorias*
 
 ```
 Insert into departments (department_id, department_name)
                 values  (280, 'QA');
 ```
 
-*Insert explicito: No se especifican lo campos, poy lo que el insert espera todos los campos, por lo que los campos que no se deseen agregar se pueden poner nulos
+*Insert explicito: No se especifican lo campos, poy lo que el insert espera todos los campos, por lo que los campos que no se deseen agregar se pueden poner nulos*
 
 ```
 Insert into departments 
                 values (290, 'Testing', NULL, NULL);
 ```
                 
- *Copiando fila con otra tabla: En este caso la clausula **values NO** se agrega
+ *Copiando fila con otra tabla: En este caso la clausula **values NO** se agrega*
 
 ```
 Insert into departments (department_id, department_name, manager_id, location_id)
@@ -1284,7 +1316,7 @@ Update departments
 where department_id = 300;
 ```
 
-*Update con sub consulta
+*Update con sub consulta*
 
 ```
 Update departments
@@ -1403,7 +1435,7 @@ Create table Editorial(
 );
 ```
 
-*Crear una table en base a otra (una consulta)
+*Crear una table en base a otra (una consulta)*
 ```
 Create table editorials as (
     Select * 
@@ -1441,7 +1473,7 @@ Create table Editorial(
 
 ```
 
-*Constrain check: se puede agregar operadores between, in, etc.
+*Constrain check: se puede agregar operadores between, in, etc.*
 
 ```
 Alter table employees
