@@ -86,23 +86,21 @@
    - [Constraint](#constraint)
       - [Sintaxis](#sintaxis-de-constraint)
       - [Foraneas](#foraneas)
-- []()
-   - []()
-   - []()
-   - []()
-   - []()
-   - []()
-   - []()
-   - []()
-   - []()
-   - []()
-   - []()
-   - []()
-   - []()
-   - []()
-   - []()
-   - []()
-   
+- [Vistas del diccionario de datos](#vistas-del-diccionario-de-datos)
+- [Secuencias](#secuencias)
+- [Sinonimos](#sinonimos)
+- [Indices](#indice)
+- [Vistas](#vistas)
+- [Subconsultas](#subconsulta)
+   - [Subconsultas Escalares](#subsonsutas-escalares)
+   - [Subconsultas Correlacionadas](#subconsultas-correlacionadas)
+   - [Operador Exists en subconsultas](#operador-exists-en-subconsultas)
+   - [Operador Not Exists en subconsultas](#operador-not-exists-en-subconsultas)
+   - [Clausula With](#clausula-with)
+- [Controlando acceso de usuarios](#controlando-el-acceso-a-usuarios)
+- [Analitic SQL for data warehousing](#analitic-sql-for-data-warehousing)
+   - [ROLLUP](#rollup)
+   - [CUBE](#cube)
    
 # Accediendo a los datos mediante Select
 
@@ -1985,25 +1983,25 @@ From user_views;
 Generalmente, usted puede realizar operaciones DML en vistas simples
 
 No se puede eliminar una fila si la vista contine lo siguiente:
-    - Funciones de grupo
-    - Una clausula GROUP BY
-    - La palabra clave DISTINCT
-    - La palabra reservada ROWNUM
+   - Funciones de grupo
+   - Una clausula GROUP BY
+   - La palabra clave DISTINCT
+   - La palabra reservada ROWNUM
 
 No se puede modificar los datos en una vista si contiene
-    - Funciones de grupo
-    - Una clausula GROUP BY
-    - La palabra clave DISTINCT
-    - La palabra reservada ROWNUM
-    - Columnas definidas por expresiones
+   - Funciones de grupo
+   - Una clausula GROUP BY
+   - La palabra clave DISTINCT
+   - La palabra reservada ROWNUM
+   - Columnas definidas por expresiones
 
 No se pueden agregar datos a través de una vista si la vista incluye
-    - Funciones de grupo
-    - Una clausula GROUP BY
-    - La palabra clave DISTINCT
-    - La palabra reservada ROWNUM
-    - Columnas definidas por expresiones
-    - Columnas NOT NULL sin valor por defecto en las tablas de base que no están señeccionados por la vista
+   - Funciones de grupo
+   - Una clausula GROUP BY
+   - La palabra clave DISTINCT
+   - La palabra reservada ROWNUM
+   - Columnas definidas por expresiones
+   - Columnas NOT NULL sin valor por defecto en las tablas de base que no están señeccionados por la vista
 
 ## Uso de la cláusula WITH CHECK OPTION
 
