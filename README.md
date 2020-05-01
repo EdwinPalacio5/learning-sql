@@ -1527,6 +1527,7 @@ La estructura de una diccionario de datos consiste en:
 
 
 ## Dictionary 
+
 contiene los nombres y descripciones de las tablas de diccionario y puntos de vista
 
 ```
@@ -1538,18 +1539,22 @@ where table_name = 'USER_OBJECTS';
 ```
 
 ## Objetos
+
 ```
 Select  object_name, object_type, created, status
 From    user_objects
 order by object_type;
+```
 
 Ver aquellas tablas que son de mi usuario
+
 ```
 Describe user_tables;
 
 Select table_name
 From user_tables;
 ```
+
 Ver columnas de una tabla en específico
 
 ```
@@ -1560,6 +1565,7 @@ From user_tab_columns
 where table_name = 'BOOK'
 Order by table_name;
 ```
+
 Ver los constraint de mi usuario, en una tabla x
 
 ```
@@ -1570,7 +1576,9 @@ from user_constraints
 where table_name = 'BOOK'
 Order By constraint_type;
 ```
+
 Ver constraint y en que columna se aplicó
+
 ```
 Describe user_cons_columns;
 
@@ -1578,6 +1586,7 @@ Select  constraint_name, column_name
 From    user_cons_columns
 Where   table_name = 'BOOK';
 ```
+
 ## Comentarios 
 
 Añadir comentarios al diccionario de una tabla
@@ -1621,7 +1630,7 @@ Secuencia: Genera valores numericos
    - Reemplaza el código de aplicación
    - Acelera el rendimiento de acceso a valores de secuencia cuando se almacena en caché en la memoria.
 
-## Sintaxis
+## Sintaxis de Sequence
 
 ```
 Create sequence name_sequence
@@ -1732,55 +1741,67 @@ Da nombres alternativos a los objetos.
 - No requiere almacenamiento que no sea su definición en el diccionario de datos
 - Es útil para oculta la identidad y la ubicación de un objeto de esquema subyacente
 
--- Creación de un sinónimo de un objeto
+## Creación de un sinónimo de un objeto
 
--- Simplificar el acceso a los objetos la creación de un sinónimo (otro nombre para un objeto). Con sinónimos, puede:
+Simplificar el acceso a los objetos la creación de un sinónimo (otro nombre para un objeto). Con sinónimos, puede:
 
--- * Crear una referencia más fácil a una tabla que es propiedad de otro usuario.
--- * Acortar largos nombres del objeto
+- Crear una referencia más fácil a una tabla que es propiedad de otro usuario.
+- Acortar largos nombres del objeto
 
--- CREATE [Public] SYNONYM synonym
--- FOR    object;
+```
+CREATE [Public] SYNONYM synonym
+FOR    object;
 
 Create synonym sinonimo_sequence_id
 For sequence_emp_id;
+```
 
+## Consultar información de sinonimos
+
+```
 Describe user_synonyms;
 
 Select *
 From user_synonyms;
+```
 
--- Eliminar sinonimo
+## Eliminar sinonimo
+```
 Drop synonym sinonimo_sequence_id;
+```
 
------------------------------------------------- Indice ---------------------------------------------
+# Indice 
 
--- mejora el rendimiento de las consultas en la recuperación de datos
+Mejora el rendimiento de las consultas en la recuperación de datos
 
--- Es un objeto de esquema
--- Puede ser utilizado por el servidor de Oracle para acelerar la recuperación de filas mediante el uso de un puntero
--- Puede reducir la entrada/salida de disco (E/S) mediante el uso de un método de acceso ruta rápida para localizar datos de forma rápida
--- Es dependiente los indices de las tablas
--- Se usa y se mantiene de forma automática por el servidor Oracle
+- Es un objeto de esquema.
+- Puede ser utilizado por el servidor de Oracle para acelerar la recuperación de filas mediante el uso de un puntero.
+- Puede reducir la entrada/salida de disco (E/S) mediante el uso de un método de acceso ruta rápida para localizar datos de forma rápida.
+- Es dependiente los indices de las tablas.
+- Se usa y se mantiene de forma automática por el servidor Oracle.
 
--- ¿Cómo se crean los indices?
+## ¿Cómo se crean los indices?
 
--- Automaticamente: Un indice único se crea automáticamente cuando se define una restricción de CLAVE PRIMARIA o UNIQUE en una definición de tabla
+- Automaticamente: Un indice único se crea automáticamente cuando se define una restricción de CLAVE PRIMARIA o UNIQUE en una definición de tabla
 
--- Manualmente: Se puede crear un índice único o no único en las columnas para acelerar el acceso a las filas.
+- Manualmente: Se puede crear un índice único o no único en las columnas para acelerar el acceso a las filas.
 
--- Sintaxis
+## Sintaxis de Index
 
--- Create [UNIQUE] [BITMAP] INDEX name_index
--- On table (column1,...);
+```
+Create [UNIQUE] [BITMAP] INDEX name_index
+On table (column1,...);
+```
 
--- Ejemplo:
-
+Ejemplo:
+```
 Create Index emp_last_name_idx
 On employees(last_name);
+```
 
--- Crear índice con el Create Table
+## Aplicación: Crear índice con el Create Table
 
+```
 Create Table NEW_EMP
 (
 employee_id     number(6)
@@ -1789,8 +1810,10 @@ employee_id     number(6)
                  On NEW_EMP(employee_id)),
 first_name      varchar2(20),
 last_name       varchar2(20));
+```
 
--- Consultar indice
+## Consultar indice
+```
 Describe user_indexes;
 
 Select index_name, table_name
@@ -1804,32 +1827,36 @@ Describe user_ind_columns;
 Select index_name, column_name
 From user_ind_columns
 Where table_name = 'departments';
+```
 
--- Los índices de función-base
+## Los índices de función-base
 
--- * Un indice basado en las funciones se basa en expresiones.
+- Un indice basado en las funciones se basa en expresiones.
 
--- * La expresión de índice se construye a partir de columnas de tabla, constantes, funciones de SQL y funciones definidas por el usuario.
+- La expresión de índice se construye a partir de columnas de tabla, constantes, funciones de SQL y funciones definidas por el usuario.
 
--- Ejemplo: Este indice lo que hará que el nombre del departamento lo vuelva mayúscula, entonces al hacer consultas esto va a mejorar el rendimiento.
+Ejemplo: Este indice lo que hará que el nombre del departamento lo vuelva mayúscula, entonces al hacer consultas esto va a mejorar el rendimiento.
 
+```
 Create index upper_dept_name_idx
 On departments(UPPER(department_name));
 
 Select *
 From    departments
 Where   UPPER(department_name) = 'SALES';
+```
 
--- Creación de varios indices en el mismo conjunto de columnas
+## Creación de varios indices en el mismo conjunto de columnas
 
--- * Puede crear varios índices en el mismo conjunto de columnas.
--- * Múltiples índices se pueden crear en el mismo conjunto de columnas sí:
---              - Los índices son de diferentes tipos
---              - Los índices utilizan diferentes particionamiento
---              - Los índices tienen diferentes propiedades de unicidad
+- Puede crear varios índices en el mismo conjunto de columnas.
+- Múltiples índices se pueden crear en el mismo conjunto de columnas sí:
+   - Los índices son de diferentes tipos
+   - Los índices utilizan diferentes particionamiento
+   - Los índices tienen diferentes propiedades de unicidad
 
--- ejemplo: para este caso hacemos alter en emp_id_name_idx1 haciendolo invisible para así poder crear el otro indice bajo el mismo conjunto de columnas
+Ejemplo: para este caso hacemos alter en emp_id_name_idx1 haciendolo invisible para así poder crear el otro indice bajo el mismo conjunto de columnas
 
+```
 Create index emp_id_name_idx1
 On employees(employee_id, first_name);
 
@@ -1837,60 +1864,65 @@ Alter index emp_id_name_idx1 invisible;
 
 Create bitmap index emp_id_name_idx2 
 On employees(employee_id, first_name);
+```
 
--- Directrices de la creación de indice
+## Directrices de la creación de indice
 
--- Cree un índice cuando:
+Cree un índice cuando:
 
--- Una columna contiene una amplia gama de valores
--- una columna contine un gran número de valores nulos
--- Una o más columnas se utilizan con frecuencia juntos en una cláusula WHERE o una condición de unión
--- La tabla es grande y se espera que la mayoría de las consultas para recuperar menos de 2% a 4% de las filas de la tabla.
+- Una columna contiene una amplia gama de valores
+- una columna contine un gran número de valores nulos
+- Una o más columnas se utilizan con frecuencia juntos en una cláusula WHERE o una condición de unión
+- La tabla es grande y se espera que la mayoría de las consultas para recuperar menos de 2% a 4% de las filas de la tabla.
 
--- No cree un índice cuando:
+No cree un índice cuando:
 
--- Las columnas no se utilizan a menudo como un condición en la consulta.
--- La tabla es pequeña o se espera que la mayoría de consultas para recuperar más de un 2% a un 4% de las filas de la tabla.
--- La tabla se actualiza con frecuencia
--- las columnas indexadas se hace referencia como parte de una expresión.
+- Las columnas no se utilizan a menudo como un condición en la consulta.
+- La tabla es pequeña o se espera que la mayoría de consultas para recuperar más de un 2% a un 4% de las filas de la tabla.
+- La tabla se actualiza con frecuencia
+- las columnas indexadas se hace referencia como parte de una expresión.
 
--------------------------------------------- Vistas --------------------------------------------------
+# Vistas 
 
--- Lógicamente representa subconjunto de los datos de unas o más tablas
+Lógicamente representa subconjunto de los datos de unas o más tablas
  
--- Ventajas
+## Ventajas
  
- -- Para restringir acceso a datos
- -- Para proporcionar independencia de datos
- -- Para hacer consultas complejas fáciles
- -- Para representar diferencres vistas de los mismos datos
+ - Para restringir acceso a datos
+ - Para proporcionar independencia de datos
+ - Para hacer consultas complejas fáciles
+ - Para representar diferencres vistas de los mismos datos
  
--- Vistas simple y complejas
+## Vistas simple y complejas
  
- -- |           Caracteristica              |   Vistas simples  |   Vistas complejas    |  
- -- |               ---                     |       ---         |       ---             |
- -- | Numeros de tablas                     |       Uno         |   Uno o más           |
- -- | Contiene funciones                    |       No          |   Si                  |
- -- | Contiene grupos de datos              |       No          |   Si                  |
- -- | Operaciones DML a través de una vista |       Si          |   No siempre          |  
+ |           Caracteristica              |   Vistas simples  |   Vistas complejas    |  
+ |               ---                     |       ---         |       ---             |
+ | Numeros de tablas                     |       Uno         |   Uno o más           |
+ | Contiene funciones                    |       No          |   Si                  |
+ | Contiene grupos de datos              |       No          |   Si                  |
+ | Operaciones DML a través de una vista |       Si          |   No siempre          |  
  
--- Sintaxis
+## Sintaxis de vista
 
- -- CREATE [OR REPLACE] [FORCE | NOFORCE] VIEW view
- --   [(alias,...)]
- -- AS Subquery
- -- [WITH CHECK  OPTION [CONSTRAINT constraint]]
- -- [WITH READ ONLY [CONSTRAINT constraint]];
-
- -- la subconsulta puede contener sintaxis SELECT complejo
+```
+  CREATE [OR REPLACE] [FORCE | NOFORCE] VIEW view
+    [(alias,...)]
+  AS Subquery
+  [WITH CHECK  OPTION [CONSTRAINT constraint]]
+  [WITH READ ONLY [CONSTRAINT constraint]];
+```
+La subconsulta puede contener sintaxis SELECT complejo.
  
- -- antes le daremos permisos para crear vistas al usuario hr, con el usuario SYSTEM
+**Nota:** antes de crear vistas, le daremos permisos para crealas al usuario hr, con el usuario SYSTEM
  
+ ```
  grant create synonym to hr;
  grant create view to hr;
+ ```
  
- -- Creación de vistas simples
+ ## Creación de vistas simples
  
+ ```
  Create view empvu80
  As (Select employee_id, last_name, salary
      From   employees
@@ -1898,31 +1930,37 @@ On employees(employee_id, first_name);
      
 Describe empvu80;
 
- -- Resultado
- -- Nombre      ¿Nulo?   Tipo         
- ------------- -------- ------------ 
- --EMPLOYEE_ID NOT NULL NUMBER(6)    
- --LAST_NAME   NOT NULL VARCHAR2(25) 
- --SALARY               NUMBER(8,2)
+ Resultado
+  Nombre      ¿Nulo?   Tipo         
+ ----------- -------- ------------ 
+ EMPLOYEE_ID NOT NULL NUMBER(6)    
+ LAST_NAME   NOT NULL VARCHAR2(25) 
+ SALARY               NUMBER(8,2)
+ ```
  
- -- Recuperando datos de una vista
+## Recuperando datos de una vista
  
+ ```
  Select *
  From empvu80;
+ ```
  
- -- Modificando una vista
- -- En este caso, se le asignaran alias a la vista, en vez de usar los que trae la tabla originalmente
+## Modificando una vista
  
+ En este caso, se le asignaran alias a la vista, en vez de usar los que trae la tabla originalmente
+ 
+ ```
  Create or Replace View empvu80
     (id_number, name, sal, department_id)
  As (Select employee_id, first_name || ' ' || last_name, salary, department_id
      From employees
      Where department_id = 80);
-    
- -- Creación de vistas complejasç
+ ```
  
- -- Utilizando funciones de agragación, joins, etc.
+## Creación de vistas complejasç
  
+ Utilizando funciones de agregación, joins, etc.
+ ```
  Create Or Replace View dept_sum_vu
     (name, minsal, maxsal, avgsal)
  As (Select d.department_name, min(e.salary), max(e.salary), avg(e.salary)
@@ -1932,68 +1970,73 @@ Describe empvu80;
      
 Select *
 From dept_sum_vu;
+```
 
--- Ver información de las vistas
-
+## Ver información de las vistas
+```
 Describe user_views;
      
 Select view_name, text
 From user_views;
+```
 
--- Reglas para realización de operaciones DML en una vista
+## Reglas para realización de operaciones DML en una vista
 
--- Generalmente, usted puede realizar operaciones DML en vistas simples
+Generalmente, usted puede realizar operaciones DML en vistas simples
 
--- No se puede eliminar una fila si la vista contine lo sieguiente:
---          - Funciones de grupo
---          - Una clausula GROUP BY
---          - La palabra clave DISTINCT
---          - La palabra reservada ROWNUM
+No se puede eliminar una fila si la vista contine lo siguiente:
+    - Funciones de grupo
+    - Una clausula GROUP BY
+    - La palabra clave DISTINCT
+    - La palabra reservada ROWNUM
 
--- No se puede modificar los datos en una vista si contiene
---          - Funciones de grupo
---          - Una clausula GROUP BY
---          - La palabra clave DISTINCT
---          - La palabra reservada ROWNUM
---          - Columnas definidas por expresiones
+No se puede modificar los datos en una vista si contiene
+    - Funciones de grupo
+    - Una clausula GROUP BY
+    - La palabra clave DISTINCT
+    - La palabra reservada ROWNUM
+    - Columnas definidas por expresiones
 
--- No se pueden agregar datos a través de una vista si la vista incluye
---          - Funciones de grupo
---          - Una clausula GROUP BY
---          - La palabra clave DISTINCT
---          - La palabra reservada ROWNUM
---          - Columnas definidas por expresiones
---          - Columnas NOT NULL sin valor por defecto en las tablas de base que no están señeccionados por la vista
+No se pueden agregar datos a través de una vista si la vista incluye
+    - Funciones de grupo
+    - Una clausula GROUP BY
+    - La palabra clave DISTINCT
+    - La palabra reservada ROWNUM
+    - Columnas definidas por expresiones
+    - Columnas NOT NULL sin valor por defecto en las tablas de base que no están señeccionados por la vista
 
--- Uso de la cláusula WITH CHECK OPTION
+## Uso de la cláusula WITH CHECK OPTION
 
- -- Puede asegurar de que las operaciones de DML se realizaron en la estancia de la vista en el dominio de la vista mediante la cláusula WITH CHECK OPTION
+Puede asegurar de que las operaciones de DML se realizaron en la estancia de la vista en el dominio de la vista mediante la cláusula WITH CHECK OPTION
 
+```
 Create or replace view empvu20
 as (Select  *
     From    employees
     Where   department_id = 20)
     WITH CHECK OPTION constraint empvu20_ck;
-    
- -- Cualquier intento de de insertar una fila con un department_id diferente de 20 o para actualizar el número de departamento para cualqueir fila en la vista falla porque viola la restricción WITH CHECK OPTION.
+```   
+ **Nota:** Cualquier intento de de insertar una fila con un department_id diferente de 20 o para actualizar el número de departamento para cualqueir fila en la vista falla porque viola la restricción WITH CHECK OPTION.
 
--- Denegar Operaciones DML
+## Denegar Operaciones DML
 
--- Puede asegurar de que no hayan operaciones de DML ocurran mediante la adición de la opción WITH READ ONLY para su definición de la vista.
--- Cualquier intento de realizar una operación de DML en cualquier fila de la vista da resultados de error en el servidor Oracle.
+- Puede asegurar de que no hayan operaciones de DML ocurran mediante la adición de la opción **WITH READ ONLY** para su definición de la vista.
+- Cualquier intento de realizar una operación de DML en cualquier fila de la vista da resultados de error en el servidor Oracle.
 
--- Eliminar vista
-
+## Eliminar vista
+```
 Drop view empvu80;
+```
 
----------------------------------- SubConsulta -----------------------------------------------
+# SubConsulta 
 
--- Subsonsutas Escalares
+## Subsonsutas Escalares
 
--- Es una subconsulta que devuelve exactamente un valor de columna de una fila
+Es una subconsulta que devuelve exactamente un valor de columna de una fila
 
- -- Subconsultas Par
+## Subconsultas Par
 
+```
 Select  employee_id, manager_id, department_id
 From    employees
 Where   (manager_id, department_id) IN (Select manager_id, department_id
@@ -2001,9 +2044,11 @@ Where   (manager_id, department_id) IN (Select manager_id, department_id
                                         Where first_name = 'John')
     And first_name <> 'John'
     order by employee_id;
+```
+  
+## Subconsulta no par    
 
- -- Subconsulta no par    
-                                        
+```                                        
 Select  employee_id, first_name, manager_id, department_id
 From    employees
 Where   (manager_id) IN (Select manager_id
@@ -2014,10 +2059,10 @@ Where   (manager_id) IN (Select manager_id
                                         Where first_name = 'John')
     And first_name <> 'John'
     order by employee_id;
+ ```   
     
-    
--- Sub consulta en CASE
-
+## Sub consulta en CASE
+```
 Select employee_id, first_name,
     (case 
         when  department_id = (Select department_id
@@ -2027,72 +2072,80 @@ Select employee_id, first_name,
         else 'USA'
     end) as "location"
 From employees;
-
- -- Subconsultas en Order by
+```
+## Subconsultas en Order by
+```
 Select  employee_id, last_name
 From    employees e
 order by (Select department_name
             From departments d
             Where e.department_id = d.department_id);
-            
--- Subconsultas Correlacionadas
+```
 
--- Subconsultas correlacionadas se utilizan para el procesamiento de fila por fila. Cada subconsulta se ejecuta una vez por cada fila de la columna externa
+## Subconsultas Correlacionadas
 
--- en este ejemplo, por cada fila se hace la consulta del salario promedio de su departamento, para así hacer la respectiva evaluación
--- Es decir, que cada vez que una fila de la consulta externa se procesa, se evalúa la consulta interna
+Subconsultas correlacionadas se utilizan para el procesamiento de fila por fila. Cada subconsulta se ejecuta una vez por cada fila de la columna externa
 
+En este ejemplo, por cada fila se hace la consulta del salario promedio de su departamento, para así hacer la respectiva evaluación
+Es decir, que cada vez que una fila de la consulta externa se procesa, se evalúa la consulta interna
+
+```
 Select last_name, salary, department_id
 From    employees tabla_externa
 Where   salary > (Select AVG(salary)
                     From    employees tabla_interna
                     Where   tabla_interna.department_id = tabla_externa.department_id);
-                    
--- Operador Exists
+```
 
--- Prueba la existencia de filas en el conjunto de resultados de la subconsulta
+## Operador Exists en Subconsultas
 
--- Si un vslor de la fila de la subconsulta se encuentra:
---      - La busqueda no se continúa en la consulta interna
---      - La condición se encuentra en valor VERDADERO
+Prueba la existencia de filas en el conjunto de resultados de la subconsulta
 
--- Si un vslor de la fila de la subconsulta NO se encuentra:
---      - La busqueda se continúa en la consulta interna
---      - La condición se encuentra en valor FALSO
+Si un valor de la fila de la subconsulta se encuentra:
+   - La busqueda no se continúa en la consulta interna
+   - La condición se encuentra en valor VERDADERO
 
--- Consultar empleados que son manager
+Si un vslor de la fila de la subconsulta **NO** se encuentra:
+   - La busqueda se continúa en la consulta interna
+   - La condición se encuentra en valor FALSO
 
+Ejemplo: Consultar empleados que son manager
+```
 Select employee_id, last_name, job_id, department_id
 From    employees tabla_externa
 Where   EXISTS ( Select 'X'
                 From    employees tabla_interna
                 Where   tabla_interna.manager_id = tabla_externa.employee_id);
+```
 
--- Operador Not Exists
+## Operador Not Exists en Subconsultas
 
--- departamentos que no tienen empleados
+Ejemplo: Obtener departamentos que no tienen empleados
 
+```
 Select department_id, department_name
 From    departments tabla_externa
 Where NOT EXISTS (Select 'X'
                     From employees tabla_interna
                     Where tabla_interna.department_id = tabla_externa.department_id); 
-                    
--- Clausula WITH
+```
 
--- El uso de cláusula WITH, puede usar el mismo bloque de consulta en una sentencia SELECT cuando se presenta más de una vez dentro de una consulta compleja
+## Clausula WITH
 
--- La cláusula WITH recupera los resultados de un bloque de consulta y lo almacena en tablas temporales del usuario
+- El uso de cláusula WITH, puede usar el mismo bloque de consulta en una sentencia SELECT cuando se presenta más de una vez dentro de una consulta compleja
 
--- la cláusula WITH puede mejorar el rendimiento
+- La cláusula WITH recupera los resultados de un bloque de consulta y lo almacena en tablas temporales del usuario
 
--- Divide y venceras
+- la cláusula WITH puede mejorar el rendimiento
 
--- En la siguiente consulta
--- Costo_departamento:  suma de salario por departamento
--- costo promedio: salario promedio de los totales de departamento
--- El el select se muestran aquellos departamentos cuya suma de salarios sea mayor al promedio
+- Divide y venceras
 
+En la siguiente consulta
+   - Costo_departamento:  suma de salario por departamento
+   - costo promedio: salario promedio de los totales de departamento
+   - En el select se muestran aquellos departamentos cuya suma de salarios sea mayor al promedio
+
+```
 With
 
 costo_departamento As (Select d.department_name, SUM(e.salary) as total_dep
@@ -2109,81 +2162,86 @@ From costo_departamento
 Where total_dep > (Select promedio_dep
                             From costo_promedio)
 Order By department_name;
+```
 
--- WITH Recursiva
+## WITH Recursiva
 
--- permite la formulación de consultas recursivas
--- crea una consulta con un nombre, llamado el WITH nombre del elemento recursivo
--- Continene dos tipos de miembros de bloque de consulta: un ancla y un recursivo
--- Es compatible con ANSI
+- permite la formulación de consultas recursivas
+- crea una consulta con un nombre, llamado el WITH nombre del elemento recursivo
+- Continene dos tipos de miembros de bloque de consulta: un ancla y un recursivo
+- Es compatible con ANSI
 
------------------------------ Controlando el acceso a Usuarios ---------------------------------------
+# Controlando el acceso a Usuarios 
 
--- Crear Usuarios
-
+## Crear Usuarios
+```
 alter session set "_ORACLE_SCRIPT" = true;
 
 Create user edwin identified by pass;
-
--- Crear Role
-
+```
+## Crear Role
+```
 Create Role tester;
+```
+## Dar privilegios a usuarios o roles
 
--- Dar privilegios a usuarios o roles
-
--- Sintaxis: 
--- Grant privilegio 
--- to user;
+Sintaxis: 
+```
+ Grant privilegio 
+ to user;
 
 Grant create session, create table, create sequence, create view
 to edwin;
 
 Grant create table, create view
 to tester;
+```
 
--- Otorgar Role a Usuario
-
+## Otorgar Role a Usuario
+```
 Grant tester to edwin;
-
--- Cambiar la contraseña de usuario
-
+```
+## Cambiar la contraseña de usuario
+```
 Alter user edwin identified by newpass;
+```
+## Consultar privilegios Otorgados mediante la vista del diccionarios de datos
 
--- Consultar privilegios Otorgados mediante la vista del diccionarios de datos
+|   Vista del Diccionarioo de datos  |                           Descripción                       |
+|    ---                             |                            ---                              |
+|   ROLE_SYS_PRIVS                   | Privilegios de Sistema otorgado a roles                     |
+|   ROLE_TAB_PRIVS                   | Privilegios de tabla otorgado a roles                       |
+|   USER_ROLE_PRIVS                  | Roles accesibles por el usuario                             | 
+|   USER_SYS_PRIVS                   | Privilegios de sistema otorgado a los usuarios              |
+|   USER_TAB_PRIVS_MADE              | Privilegios de objetos otorgados en los objetos de usuarios |
+|   USER_TAB_PRIVS_RECD              | Privilegios de objetos otorgados al usuario                 |
+|   USER_COL_PRIVS_MADE              | Privilegios de objetos otorgados sobre las columnas de objetos de usuarios |     
+|   USER_COL_PRIVS_RECD              | Privilegios de objeto otorgados a laos usuarios sobre específicas columnas |
 
--- |   Vista del Diccionarioo de datos  |                           Descripción                       |
--- |    ---                             |                            ---                              |
--- |   ROLE_SYS_PRIVS                   | Privilegios de Sistema otorgado a roles                     |
--- |   ROLE_TAB_PRIVS                   | Privilegios de tabla otorgado a roles                       |
--- |   USER_ROLE_PRIVS                  | Roles accesibles por el usuario                             | 
--- |   USER_SYS_PRIVS                   | Privilegios de sistema otorgado a los usuarios              |
--- |   USER_TAB_PRIVS_MADE              | Privilegios de objetos otorgados en los objetos de usuarios |
--- |   USER_TAB_PRIVS_RECD              | Privilegios de objetos otorgados al usuario                 |
--- |   USER_COL_PRIVS_MADE              | Privilegios de objetos otorgados sobre las columnas de objetos de usuarios |     |
--- |   USER_COL_PRIVS_RECD              | Privilegios de objeto otorgados a laos usuarios sobre específicas columnas |
---
 
----------------------- ANALITIC SQL FOR DATA WAREHOUSING ----------------------------------------------
-/*
- Oracle ha introducido muchas operaciones SQL para realizar operaciones analíticas  en la base de datos.
- - Estas operaciones incluyen clasificación, promedios móviles, sumas acumulativas, ratios-informes y comparaciones de período a péríodo.
+# ANALITIC SQL FOR DATA WAREHOUSING 
+
+Oracle ha introducido muchas operaciones SQL para realizar operaciones analíticas  en la base de datos.
+
+ - Estas operaciones incluyen clasificación, promedios móviles, sumas acumulativas, ratios-informes y comparaciones de período a período.
  - Aunque anteriormente algunos de estos cálculo eran posibles utilizando SQL, esta sintaxis ofrece un rendimiento mucho mejor.
  Group By con los operadores ROLLUP y CUBE
- Use ROLLUP o CUBE con Group BY para producir filas superagregadas mediante columnas de referencias cruzadas.
-  ROLLUP
+ - Use ROLLUP o CUBE con Group BY para producir filas superagregadas mediante columnas de referencias cruzadas.
+  
+##  ROLLUP
  
   - Produce un conjunto de resultados que contiene las filas agrupadas regulares y los valores de subtotal y total general
   - Es un extensión de la clausula GROUP BY
   - Use la operación ROLLUP para producir agregados acumulativos, como subtotales.
   - Utilizado, para hacer operaciones de agregación para múltiples niveles en una jerarquía
- */
  
+ ```
  SELECT department_id, job_id, SUM(salary)
  FROM   employees
  WHERE  department_id < 60
  Group by rollup (department_id, job_id);
  
- /*
+ 
  DEPARTMENT_ID JOB_ID     SUM(SALARY)
 ------------- ---------- -----------
            10 AD_ASST           4400
@@ -2202,12 +2260,12 @@ Alter user edwin identified by newpass;
            50                 156400
                               211200
     15 filas seleccionadas. 
- */
+ ```
  
- -- Equivalente ocupando Grouping Sets
+ ### ROLLUP Equivalente ocupando Grouping Sets
  
- -- Permite agregar más de un conjunto de agrupación al group by
- 
+ Nota: Grouping sets permite agregar más de un conjunto de agrupación al group by
+ ```
  SELECT department_id, job_id, SUM(salary)
  FROM   employees
  WHERE  department_id < 60
@@ -2215,9 +2273,10 @@ Alter user edwin identified by newpass;
             (department_id, job_id),
             (department_id),
             ());
-            
- -- Equivalente ocupando Union All
+  ```          
+ ### ROLLUP Equivalente ocupando Union All
  
+ ```
  SELECT department_id, job_id, SUM(salary)
  FROM   employees
  WHERE  department_id < 60
@@ -2235,9 +2294,9 @@ SELECT department_id, NULL , SUM(salary)
   SELECT NULL, NULL, SUM(salary)
  FROM   employees
  WHERE  department_id < 60;
+ ```
  
- 
- /*CUBE
+## CUBE
  
  - Produce un conjunto de resultados que contiene las filas de ROLLUP y las de filas de tabulación cruzada.
  - CUBE es una extensión de la clásula GROUP BY
@@ -2248,24 +2307,21 @@ SELECT department_id, NULL , SUM(salary)
    Ejemplo: Recuperar la suma de los salarios agrupados por todas las combinaciones de departamento y puesto
             de trabajo, así como obtener el gran total
             
-*/
-
--- Paso 1: Agrupamos
+Paso 1: Agrupamos
 
 Select department_id, job_id, SUM(salary)
 From employees
 WHERE department_id < 60
 Group by (department_id, job_id);
 
--- Paso 2: Aplicamos CUBE, que nos permitirá ver los subtotales por job_id, subtotales por departamento,
---         subtotales  por departamento y job_id y el total global.
+Paso 2: Aplicamos CUBE, que nos permitirá ver los subtotales por job_id, subtotales por departamento, subtotales  por departamento y job_id y el total global.
 
+```
 Select department_id, job_id, SUM(salary)
 From employees
 WHERE department_id < 60
 Group by CUBE (department_id, job_id);
 
-/*
 DEPARTMENT_ID JOB_ID     SUM(SALARY)
 ------------- ---------- -----------
                               211200    GRAN TOTAL
@@ -2293,9 +2349,10 @@ DEPARTMENT_ID JOB_ID     SUM(SALARY)
            50 SH_CLERK         64300
            50 ST_CLERK         55700
 24 filas seleccionadas. 
-*/
--- Equivalente en GROUPING SETS
+```
 
+### CUBE Equivalente en GROUPING SETS
+```
 Select department_id, job_id, SUM(salary)
 FROM employees
 Where department_id < 60
@@ -2305,8 +2362,7 @@ Group by GROUPING SETS (
           (job_id),
           ()
         );
-
-/*        
+       
 DEPARTMENT_ID JOB_ID     SUM(SALARY)
 ------------- ---------- -----------
            40 HR_REP            6500
@@ -2334,10 +2390,10 @@ DEPARTMENT_ID JOB_ID     SUM(SALARY)
            50                 156400
                               211200
 24 filas seleccionadas.
-*/
+```
 
--- Equivalente en UNION ALL
-
+### CUBE Equivalente en UNION ALL
+```
 Select department_id, job_id, SUM(salary)
 FROM employees
 Where department_id < 60
@@ -2363,7 +2419,7 @@ Select NULL, NULL, SUM(salary)
 FROM employees
 Where department_id < 60;
 
-/*
+
 DEPARTMENT_ID JOB_ID     SUM(SALARY)
 ------------- ---------- -----------
            50 ST_CLERK         55700
@@ -2391,6 +2447,6 @@ DEPARTMENT_ID JOB_ID     SUM(SALARY)
               HR_REP            6500
                               211200
 24 filas seleccionadas.
-*/
+```
 
 
