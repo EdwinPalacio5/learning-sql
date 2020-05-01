@@ -1272,7 +1272,7 @@ order by job_id;
 # DML Lenguaje de Manipulación de Datos 
 
  |            Funcion           |             Descripcion                     |
- |            ---               |                                             |
+ |            ---               |                  ---                        |
  | INSERT                       | Agrega una nueva fila a la tabla            |
  | UPDATE                       | Modifica las filas existentes               |
  | DELETE                       | Elimina las filas existentes                |
@@ -1457,8 +1457,6 @@ create table dpto80 as (
 Describe dpto80;
 ````
 
-
-
 ## Constraint
  
 ### Sintaxis de constraint: 
@@ -1512,77 +1510,93 @@ Describe book;
 
 ```
 
----------------------------- Vistas del Diccionario de datos -------------------------------------
+# Vistas del Diccionario de datos 
 
--- Los diccionarios de datos es la metadata, es decir la deficion de todo lo que tenemos en nuestra
--- base de datos.
+Los diccionarios de datos es la metadata, es decir la deficion de todo lo que tenemos en nuestra base de datos.
 
--- La estructura de una diccionario de datos consiste en:
---              -> Tablas base
---              -> Vistas accesibles al usuario 
+La estructura de una diccionario de datos consiste en:
+   - Tablas base
+   - Vistas accesibles al usuario 
 
--- Prefijo
+## Prefijo
 
--- User: Vista del usuario (lo que está en su esquema)
--- ALL: Vista ampliada del usuario (los que se tiene en su propio esquema y los que esquemas que otros
---      usuarios han dado acceso)
--- DBA: Lo que está en los esquemas de todo el mundo
--- V$ : Los datos relacionados con el rendimiento
+- User: Vista del usuario (lo que está en su esquema). 
+- ALL: Vista ampliada del usuario (los que se tiene en su propio esquema y los que esquemas que otros usuarios han dado acceso).
+- DBA: Lo que está en los esquemas de todo el mundo.
+- V$: Los datos relacionados con el rendimiento.
 
 
--- Dictionary contiene los nombres y despreciones de las tablas de diccionario y puntos de vista
+## Dictionary 
+contiene los nombres y descripciones de las tablas de diccionario y puntos de vista
+
+```
 Describe dictionary;
 
 Select *
 From dictionary
 where table_name = 'USER_OBJECTS';
+```
 
--- Ver objetos
+## Objetos
+```
 Select  object_name, object_type, created, status
 From    user_objects
 order by object_type;
 
--- Aquellas tablas que son de mi usuario
+Ver aquellas tablas que son de mi usuario
+```
 Describe user_tables;
 
--- Ver tablas
 Select table_name
 From user_tables;
+```
+Ver columnas de una tabla en específico
 
+```
 Describe user_tab_columns;
 
--- Ver columnas de una tabla en específico
 Select table_name, column_name
 From user_tab_columns
 where table_name = 'BOOK'
 Order by table_name;
+```
+Ver los constraint de mi usuario, en una tabla x
 
+```
 Describe user_constraints;
 
--- ver los constraint de mi usuario, en una tabla x
 Select constraint_name, constraint_type, search_condition, r_constraint_name, delete_rule, status
 from user_constraints
 where table_name = 'BOOK'
 Order By constraint_type;
-
+```
+Ver constraint y en que columna se aplicó
+```
 Describe user_cons_columns;
 
--- ver constraint y en que columna se aplicó 
 Select  constraint_name, column_name
 From    user_cons_columns
 Where   table_name = 'BOOK';
+```
+## Comentarios 
 
--- Añadir comentarios al diccionario de una tabla
+Añadir comentarios al diccionario de una tabla
+
+```
 comment on table book 
         is 'Libros';
+```
 
+Añadir comentarios al diccionario de una columna
 
--- Añadir comentarios al diccionario de una columna
+```
 comment on column book.title
         is 'Titulo del libro';
-        
--- ver comentarios de las tablas, y de los comentarios
+ ```       
 
+Ver comentarios de las tablas, y de los comentarios
+
+```
 Describe user_tab_comments;
 
 Select table_name, comments
@@ -1594,20 +1608,22 @@ Describe user_col_comments;
 Select column_name, comments
 From user_col_comments
 Where table_name = 'BOOK';
+```
 
--- Nota: En los ejemplos anteriores solo se utilizó el prefijo **user**.
+**Nota:** En los ejemplos anteriores solo se utilizó el prefijo **user**.
 
-------------------------------------- Secuencias ---------------------------------------------------
+# Secuencias
 
--- Secuencia: Genera valores numericos
--- Puede generar de forma automatica números únicos
--- Es un objteto compatible
--- Se puede utilizar para crear un valor de clave principal (para esto se ocupa normalmente)
--- Reemplaza el código de aplicación
--- Acelera el rendimiento de acceso a valores de secuencia cuando se almacena en caché en la memoria.
+Secuencia: Genera valores numericos
+   - Puede generar de forma automatica números únicos
+   - Es un objteto compatible
+   - Se puede utilizar para crear un valor de clave principal (para esto se ocupa normalmente)
+   - Reemplaza el código de aplicación
+   - Acelera el rendimiento de acceso a valores de secuencia cuando se almacena en caché en la memoria.
 
--- Sintaxis
+## Sintaxis
 
+```
 Create sequence name_sequence
         increment  by   10
         start with      10
@@ -1616,96 +1632,105 @@ Create sequence name_sequence
         nocache
         nocycle
         order;
-
--- Nota: puede ser nocache o cache integer
---                 nocycle o cycle
---                 noorder o order                
-
--- Para acceder a los valores de sequence se puede: Nextval(siguiente) y Currval(actual)
+```
+**Nota:** puede ser nocache o cache integer, nocycle o cycle, noorder o order.                
 
 
--- Columna por defecto de SQL usando una secuencia
+Para acceder a los valores de sequence se puede: **Nextval**(siguiente) y **Currval**(actual)
 
--- * Sintaxis SQL para columnas que permitan valor por defecto <sequence>.nextval, <sequence>.currval
---   como una columan SQL expresión por defecto para columnas numéricas, donde <sequence> es una 
---   secuencia de base de datos Oracle.
 
--- * La expresión DEFAULT puede incluir la secuencia con seudo columnas CURRVAL y NEXTVAL, mientras
---   exista la secuencia y usted tenga los privilegios necesarios para acceder a ella.
+## Aplicacion: Columna por defecto de SQL usando una secuencia
 
---   Ejemplo1: crear secuencia incremental de 1 en 1
+   - Sintaxis SQL para columnas que permitan valor por defecto <sequence>.nextval, <sequence>.currval como una columan SQL expresión por defecto para columnas numéricas, donde <sequence> es una secuencia de base de datos Oracle.
 
+   - La expresión DEFAULT puede incluir la secuencia con seudo columnas CURRVAL y NEXTVAL, mientras exista la secuencia y usted tenga los privilegios necesarios para acceder a ella.
+
+
+Ejemplo1: crear secuencia incremental de 1 en 1
+```
 Create sequence sequence_emp_id
                 start with 1;
+```
 
---   Vincular secuencia con una tabla, para generar id 
+Vincular secuencia con una tabla, para generar id 
 
+```
 Create table emp(
         id_emp      number      default sequence_emp_id.nextval     not null,
         name_emp    varchar(50) 
 );
+```
 
---   Probar inserciones
+Probar inserciones
 
+```
 Insert into emp(name_emp)
         values ('Edwin');
         
 Insert into emp(name_emp)
         values ('Joel');
-        
---   Verificamos
+```        
 
+Verificamos
+
+```
 Select *
 From emp;
 
--- Resultado
 
---    ID_EMP NAME_EMP                                          
------------- --------------------------------------------------
---         1 Edwin                                             
---         2 Joel  
+Resultado
+
+    ID_EMP NAME_EMP                                          
+---------- --------------------------------------------------
+         1 Edwin                                             
+         2 Joel  
+```
+
+## Los valores de secuencia Caching
+
+   - Almacenamiento en caché de valores de secuencia en la memoria da un acceso más rápido a esos valores.
+
+   - Pueden ocurrir lagunas o vacíos en valores de secuencia cuando: una reversión se produce, los fallos del sistema, una secuencia se utiliza en otra tabla.
 
 
--- Los valores de secuencia Caching
+## Modificando una sequence: Alter Sequence
 
--- * Almacenamiento en caché de valores de secuencia en la memoria da un acceso más rápido a esos 
---   valores.
+ Reglas para la modificación de una secuencia
 
--- * Pueden ocurrir lagunas o vacíos en valores de secuencia cuando: una reversión se produce, los 
---   fallos del sistema, una secuencia se utiliza en otra tabla.
+- Usted debe ser el propietario o tener el privilegio ALTER para la secuencia
+- Sólo los números de secuencia futuros se ven afectados.
+- La secuencia debe caer y volver a crear al reiniciar la secuencia en un número diferente.
+- En algunos se relaiza validación.
+- Para eliminar una secuencia, utilice la sentencia DROP:
 
-
--- Modificando una sequence: Alter Sequence
-
--- Reglas para la modificación de una secuencia
-
--- * Usted debe ser el propietario o tener el privilegio ALTER para la secuencia
--- * Sólo los números de secuencia futuros se ven afectados.
--- * La secuencia debe caer y volver a crear al reiniciar la secuencia en un número diferente.
--- * En algunos se relaiza validación.
--- * Para eliminar una secuencia, utilice la sentencia DROP:
-
+```
 Alter sequence sequence_emp_id
                 nocache
                 nocycle;
-                
--- Eliminar Sequence : Drop Sequence
+```
 
+## Eliminar Sequence : Drop Sequence
+
+```
 Drop sequence name_sequence;
+```
 
--- Obtener información de sequence
+## Obtener información de sequence
 
+```
 Describe user_sequences;
 
 Select *
 From  user_sequences;
+```
 
---------------------------------------- SINONIMOS --------------------------------------------------
--- Da nombres alternativos a los objetos
--- Es un objeto de base de datos
--- Puede ser creado para dar un nombre alternativo para una tabla o a otro objeto de base de datos
--- No requiere almacenamiento que no sea su definición en el diccionario de datos
--- Es útil para oculta la identidad y la ubicación de un objeto de esquema subyacente
+# SINONIMOS  
+Da nombres alternativos a los objetos.
+
+- Es un objeto de base de datos
+- Puede ser creado para dar un nombre alternativo para una tabla o a otro objeto de base de datos
+- No requiere almacenamiento que no sea su definición en el diccionario de datos
+- Es útil para oculta la identidad y la ubicación de un objeto de esquema subyacente
 
 -- Creación de un sinónimo de un objeto
 
