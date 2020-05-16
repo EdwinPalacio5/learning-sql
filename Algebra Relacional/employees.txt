@@ -1,0 +1,39 @@
+-- Acceder al siguiente sitio https://dbis-uibk.github.io/relax/index.htm
+
+-- cargar el siguiente ejemplo
+
+group: employees 
+
+
+Empleado = {
+	EmpID:number, Enombre:string, Salario:number, DepID:number
+	101 , "Ron Blue", 30000, 1
+	102, "Jennifer Pink", 35000,2
+	103, "Gary Green", 40000, 3
+	104, "Robert Red", 35000, 2
+	105, "Dan Black", 40000, 3
+}
+
+Departamento = {
+	DepID:number, Dnombre:string, JefeEmpID:number, Presupuesto:number
+	1, "Acme", 101, 100000
+	2, "Ajax", 104, 200000
+	3, "AAA", 103, 300000
+}
+
+Trabaja = {
+	ProyID:number, EmpID:number, Horas:number
+	40,101,20
+	10,102,40
+	30,103,30
+	20,102,20
+	20,104,10
+}
+
+Proyecto = {
+	ProyID:number, Pnombre:string, DepID:number
+	10, "X", 2
+	20, "Y", 2
+	30, "Z", 3
+	40, "W", 1
+}
